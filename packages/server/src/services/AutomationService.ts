@@ -6,9 +6,9 @@ import automation, { WorkinStatus } from "@automation/browser-automation";
 })
 export class AutomationService {
 
-  public async automateMeanGoogleForm() {
-    const urlScraped = await automation.meanGoogleFormAutomation(WorkinStatus.In, { args: ["--no-sandbox", "--disable-setuid-sandbox"] })
+  public async automateMeanGoogleForm(workingStatus: WorkinStatus) {
     console.log("------ AutomationService -----")
+    const urlScraped = await automation.meanGoogleFormAutomation(workingStatus, { args: ["--no-sandbox", "--disable-setuid-sandbox"] })
     console.log(urlScraped)
     return urlScraped
   }
