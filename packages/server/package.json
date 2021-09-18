@@ -9,6 +9,9 @@
     "predeploy": "yarn build",
     "clean": "rm -rf ./dist"
   },
+  "engines": {
+    "node": "14.16.0"
+  },
   "main": "dist/index.js",
   "dependencies": {
     "@line/bot-sdk": "^7.4.0",
