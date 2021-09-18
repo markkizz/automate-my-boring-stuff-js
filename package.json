@@ -1,0 +1,23 @@
+{
+  "name": "@automation/root",
+  "private": true,
+  "scripts": {
+    "prepare": "lerna run build",
+    "setup": "lerna bootstrap",
+    "build": "lerna run build",
+    "publish:registry": "lerna bootstrap && lerna run publish:registry",
+    "add:package": "lerna add",
+    "deploy": "lerna run deploy"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.31.1",
+    "@typescript-eslint/parser": "^4.31.1",
+    "lerna": "^4.0.0",
+    "typescript": "^4.4.3"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/**"
+    ]
+  }
+}
