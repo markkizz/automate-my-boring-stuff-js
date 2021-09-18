@@ -1,12 +1,24 @@
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
 
 import { LinebotModule } from "@/Linebot/Linebot.module"
 import { HealthCheckController } from "@/HealthCheck/HealthCheck.controller"
-import { AutomationService } from "@/services/AutomationService";
+import { linebotMiddleware } from "@/Linebot/Linebot.middleware";
+import { JsonBodyMiddleware } from "@/middlewares/BodyParserMiddleware";
 
 @Module({
   imports: [LinebotModule],
   controllers: [HealthCheckController],
-  providers: [AutomationService]
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  public configure(consumer: MiddlewareConsumer) {
+    // HACK: validate-signature in line sdk
+    consumer
+      .apply(linebotMiddleware)
+      .forRoutes({
+        path: "/linebot/webhook",
+        method: RequestMethod.POST
+      })
+      .apply(JsonBodyMiddleware)
+      .forRoutes("*")
+  }
+}

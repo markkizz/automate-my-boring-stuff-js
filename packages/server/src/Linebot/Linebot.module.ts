@@ -1,16 +1,16 @@
-import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import { Module, NestModule } from "@nestjs/common";
 
-import { linebotMiddleware } from "./Linebot.middleware"
 import { LinebotController } from "./Linebot.controller"
-
+import { LinebotMessageService } from "./LinebotMessage.service";
+import { AutomationService } from "@/services/AutomationService";
 
 @Module({
-  controllers: [LinebotController]
+  controllers: [LinebotController],
+  providers: [LinebotMessageService, AutomationService],
+  exports: [LinebotMessageService]
 })
 export class LinebotModule implements NestModule {
-  public configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(linebotMiddleware)
-      .forRoutes(LinebotController)
+  public configure(/* consumer: MiddlewareConsumer */) {
+    //
   }
 }
