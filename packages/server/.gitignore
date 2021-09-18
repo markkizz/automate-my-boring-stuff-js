@@ -1,0 +1,19 @@
+# Compiled JavaScript files
+lib/**/*.js
+lib/**/*.js.map
+lib
+dist
+dist/**/*.js
+dist/**/*.js.map
+
+# TypeScript v1 declaration files
+typings/
+
+# Node.js dependency directory
+node_modules/
+.npmrc
+
+firebase-debug.log
+ui-debug.log
+
+.env
