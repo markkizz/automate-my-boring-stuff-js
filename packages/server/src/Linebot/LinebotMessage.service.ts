@@ -1,7 +1,7 @@
 import { AutomationService } from "@/services/AutomationService";
 import { LineClient, LineClientService } from "@/services/LineHttpClientService";
 import { WorkinStatus } from "@automation/browser-automation";
-import { Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
+import { Inject, Injectable, InternalServerErrorException, NotFoundException, Scope } from "@nestjs/common";
 
 import { TextEventMessage } from "./types/Message"
 
@@ -44,7 +44,9 @@ export class LinebotMessageService {
 
   public async manageMessageTextType(event: TextEventMessage) {
     const { message } = event
-    if (message.text === WorkinStatus.In || message.text === WorkinStatus.Out) {
+    if (message.text === "สวัสดีคุณหมู") {
+      await this.greetingMrMoo(event)
+    } else if (message.text === WorkinStatus.In || message.text === WorkinStatus.Out) {
       await this.automateClockInClockOut(event, message.text)
     } else {
       await this._lineClient.replyMessage(event.replyToken, {
@@ -52,6 +54,19 @@ export class LinebotMessageService {
         text: "ขอโทษด้วยครัยยังไม่มีฟังก์ชั่นนอกเหนือจากในเมนูหรือยังไม่ support ครับป๋ม"
       })
       throw new NotFoundException("No text message to be matched.")
+    }
+  }
+
+  public async greetingMrMoo(event: TextEventMessage) {
+    try {
+      await this._lineClient.replyMessage(event.replyToken, {
+        type: "text",
+        text: "สวัสดีครับป๋ม ตั้งใจทำงานด้วยน้าา"
+      })
+    } catch (error) {
+      await this.dieReply(event.replyToken, "เอ๋ !@#$#@$& ไม่รู้ว่าเป็นอะไรอะขอโทษน้า :(")
+      console.log("[error] greetingMrMoo:", error)
+      throw new InternalServerErrorException("Something went wrong.")
     }
   }
 
@@ -80,12 +95,20 @@ export class LinebotMessageService {
       })
 
     } catch (error) {
+      await this.dieReply(event.replyToken)
       console.log("[error] automateClockInClockOut", error)
       throw {
         status: 500,
         message: "Internal server error"
       }
     }
+  }
+
+  public async dieReply(token: string, message?: string) {
+    return this._lineClient.replyMessage(token, {
+      type: "text",
+      text: !message ? "อุ๊ปส์.. ไม่รู้ว่าเกิดอะไรขึ้น คุณหมูทำให้ไม่ได้แล้วแหละแหะๆ" : message
+    })
   }
 
 }
