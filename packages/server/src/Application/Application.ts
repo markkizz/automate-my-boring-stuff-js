@@ -3,6 +3,7 @@ import { Express } from "express"
 import { ExpressAdapter } from "@nestjs/platform-express";
 
 import { AppModule } from "./App.module"
+import { HttpExceptionFilter } from "./ExceptionHandler";
 
 export class Application extends BaseApplication {
   constructor(expressInstance: Express) {
@@ -12,7 +13,8 @@ export class Application extends BaseApplication {
 
     this.installAdapter(new ExpressAdapter(expressInstance))
 
-  }
+    this.useFilter(HttpExceptionFilter)
 
+  }
 
 }
