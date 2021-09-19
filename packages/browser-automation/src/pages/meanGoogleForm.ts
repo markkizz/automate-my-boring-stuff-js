@@ -1,5 +1,6 @@
 import puppeteer, { BrowserConnectOptions, BrowserLaunchArgumentOptions, LaunchOptions, Product } from "puppeteer"
-import { eventLog, randomBetweenNumber } from "@/utils"
+import _random from "lodash.random"
+import { eventLog } from "@/utils"
 
 export enum WorkinStatus {
   In = "เข้ามาทำงาน",
@@ -9,6 +10,7 @@ export enum WorkinStatus {
 export type AutomationOptions = LaunchOptions & BrowserLaunchArgumentOptions & BrowserConnectOptions & {
   product?: Product
   extraPrefsFirefox?: Record<string, unknown>
+  targetUrl?: string
 }
 
 export async function meanGoogleFormAutomation(workingStatus: WorkinStatus = WorkinStatus.In, options?: AutomationOptions) {
@@ -16,7 +18,11 @@ export async function meanGoogleFormAutomation(workingStatus: WorkinStatus = Wor
   try {
     const browser = await puppeteer.launch({...options, slowMo: 250, timeout: 6000})
     const page = await browser.newPage()
-    await page.goto("https://docs.google.com/forms/d/e/1FAIpQLSfixHCPJAibiKvt1trmklhwIOENLiaayUg8ewr1K3dO8ViW5Q/viewform?usp=sf_link", {
+    const googleForm = options.targetUrl
+      ? options.targetUrl
+      : "https://docs.google.com/forms/d/e/1FAIpQLSfixHCPJAibiKvt1trmklhwIOENLiaayUg8ewr1K3dO8ViW5Q/viewform?usp=sf_link"
+    console.log(`----------- goto ${googleForm} ------------`)
+    await page.goto(googleForm, {
       waitUntil: "networkidle2"
     })
 
@@ -25,7 +31,6 @@ export async function meanGoogleFormAutomation(workingStatus: WorkinStatus = Wor
     const selectEmployee = await page.$(`[role="listbox"]`)
     await selectEmployee.click()
     const mean = await page.waitForSelector(`[role="option"][data-value="3M-OP-0037 น.ส.สายเพชร ดำรงวงศ์สว่าง"]`)
-    // const mean = await page.$(`[data-value="3M-OP-0037 น.ส.สายเพชร ดำรงวงศ์สว่าง"]`)
     eventLog("query", "found mean", "ok")
     await mean.click()
     eventLog("click", "select mean", "ok")
@@ -39,11 +44,13 @@ export async function meanGoogleFormAutomation(workingStatus: WorkinStatus = Wor
     await checkbox.click()
     eventLog("click", "working status", "ok")
 
+    let randTemperature = "0"
     if (workingStatus === WorkinStatus.In) {
       // 3. วัดอุณหภูมิ (องศาเซลเซียส)- เฉพาะตอนเข้างานเท่านั้น
       eventLog("begin", "typing temperature")
+      randTemperature = _random(35, 36.5, true).toFixed(1)
       const temperatureInput = await page.$("input[type=text]")
-      const randTemperature = randomBetweenNumber(36.2, 35)
+      // const randTemperature = randomBetweenNumber(36, 35)
       eventLog("random", `temperature is ${randTemperature}`, "ok")
       await temperatureInput.type(randTemperature)
       eventLog("type", "typing temperature", "ok")
@@ -72,7 +79,10 @@ export async function meanGoogleFormAutomation(workingStatus: WorkinStatus = Wor
 
     await page.close()
     await browser.close()
-    return googlescriptUrl
+    return {
+      url: googlescriptUrl,
+      temperature: randTemperature
+    }
   } catch (error) {
     console.log(error)
     // page.screenshot({
