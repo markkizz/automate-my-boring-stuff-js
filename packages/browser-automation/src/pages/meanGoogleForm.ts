@@ -25,6 +25,8 @@ export async function meanGoogleFormAutomation(workingStatus: WorkinStatus = Wor
     await page.goto(googleForm, {
       waitUntil: "networkidle2"
     })
+    await page.waitForNavigation()
+    await page.waitForSelector("body")
 
     // 1. ชื่อ-นามสกุล
     eventLog("begin", "select employee")
@@ -89,6 +91,8 @@ export async function meanGoogleFormAutomation(workingStatus: WorkinStatus = Wor
     //   path: "./error-screenshot.png",
     //   fullPage: true
     // })
-    throw error
+    throw {
+      message: "Something went wrong with automation."
+    }
   }
 }
