@@ -15,7 +15,6 @@ export class LinebotController {
   public async incomingMessage(
     @Body() messageEvent: WebhookMessageEvent
   ) {
-    console.log("--------- message event ----------")
     this._linebotMessageService.manageMessageEvent(messageEvent.events)
     return {}
   }
