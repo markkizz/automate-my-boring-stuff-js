@@ -1,7 +1,7 @@
 import { AutomationService } from "@/services/AutomationService";
 import { LineClient, LineClientService } from "@/services/LineHttpClientService";
 import { WorkinStatus } from "@automation/browser-automation";
-import { Inject, Injectable, Scope } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
 
 import { TextEventMessage } from "./types/Message"
 
@@ -44,12 +44,14 @@ export class LinebotMessageService {
 
   public async manageMessageTextType(event: TextEventMessage) {
     const { message } = event
-    console.log("--------- incoming event ---------")
-    console.log(event)
     if (message.text === WorkinStatus.In || message.text === WorkinStatus.Out) {
       await this.automateClockInClockOut(event, message.text)
     } else {
-      throw new Error("No text message to be matched.")
+      await this._lineClient.replyMessage(event.replyToken, {
+        type: "text",
+        text: "ขอโทษด้วยครัยยังไม่มีฟังก์ชั่นนอกเหนือจากในเมนูหรือยังไม่ support ครับป๋ม"
+      })
+      throw new NotFoundException("No text message to be matched.")
     }
   }
 

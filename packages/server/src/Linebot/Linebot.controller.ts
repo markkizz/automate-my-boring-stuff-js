@@ -11,7 +11,7 @@ export class LinebotController {
   ) {}
 
   @HttpCode(200)
-  @Post("/webhook")
+  @Post("/mrmoo")
   public async incomingMessage(
     @Body() messageEvent: WebhookMessageEvent
   ) {
