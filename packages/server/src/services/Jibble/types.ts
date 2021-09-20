@@ -1,7 +1,12 @@
 import { BaseClientOptions } from "@automation/httpclient";
 
 export interface JibbleClientOptions extends BaseClientOptions {
-  accessToken: string
+  endpoints?: {
+    identity?: string
+    timetracker?: string
+  }
+  accessToken?: string
+  personAccessToken?: string
 }
 
 export interface IUserAccessTokenResponse {

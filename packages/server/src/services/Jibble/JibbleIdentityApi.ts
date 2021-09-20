@@ -3,8 +3,15 @@ import FormData from "form-data"
 import { BaseApiService } from "@automation/httpclient"
 import { JibbleClientService } from "./JibbleClientService";
 import { IOrganizationIdResponse, IPersonAccessTokenResponse, IPersonIdResponse, IUserAccessTokenResponse } from "./types";
+import _cloneDeep from "lodash/cloneDeep"
 
 export class JibbleIdentityApi extends BaseApiService<JibbleClientService> {
+
+  constructor(apiClient: JibbleClientService) {
+    const client = _cloneDeep(apiClient)
+    client.clientOptions.baseURL = apiClient.clientOptions.endpoints.identity
+    super(client)
+  }
 
   public async getUserAccessToken(username: string, password: string) {
     const data = stringify({
