@@ -16,14 +16,14 @@ export type AutomationOptions = LaunchOptions & BrowserLaunchArgumentOptions & B
 export async function meanGoogleFormAutomation(workingStatus: WorkinStatus = WorkinStatus.In, options?: AutomationOptions) {
   console.log(`------------ Begining Mean Automation @${new Date().toLocaleString()}-------------`)
   try {
-    const browser = await puppeteer.launch({...options, slowMo: 250, timeout: 6000})
+    const browser = await puppeteer.launch({...options, slowMo: 250, timeout: 60000})
     const page = await browser.newPage()
     const googleForm = options.targetUrl
       ? options.targetUrl
       : "https://docs.google.com/forms/d/e/1FAIpQLSfixHCPJAibiKvt1trmklhwIOENLiaayUg8ewr1K3dO8ViW5Q/viewform?usp=sf_link"
     console.log(`----------- goto ${googleForm} ------------`)
     await page.goto(googleForm, {
-      waitUntil: "networkidle0",
+      waitUntil: "load",
       timeout: 0
     })
     await page.waitForNavigation()
@@ -69,7 +69,9 @@ export async function meanGoogleFormAutomation(workingStatus: WorkinStatus = Wor
     await buttonSubmit.click()
     eventLog("click", "submit form", "ok")
 
-    await page.waitForNavigation()
+    await page.waitForNavigation({
+      waitUntil: "networkidle0"
+    })
     eventLog("change page", "navigate to the next page", "ok")
 
     // Click to check location
