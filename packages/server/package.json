@@ -14,7 +14,7 @@
   },
   "main": "dist/index.js",
   "dependencies": {
-    "@automation/browser-automation": "0.0.9",
+    "@automation/browser-automation": "0.0.10",
     "@line/bot-sdk": "^7.4.0",
     "@nestjs/common": "^8.0.6",
     "@nestjs/core": "^8.0.6",

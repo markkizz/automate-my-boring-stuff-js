@@ -23,7 +23,8 @@ export async function meanGoogleFormAutomation(workingStatus: WorkinStatus = Wor
       : "https://docs.google.com/forms/d/e/1FAIpQLSfixHCPJAibiKvt1trmklhwIOENLiaayUg8ewr1K3dO8ViW5Q/viewform?usp=sf_link"
     console.log(`----------- goto ${googleForm} ------------`)
     await page.goto(googleForm, {
-      waitUntil: "networkidle2"
+      waitUntil: "networkidle0",
+      timeout: 0
     })
     await page.waitForNavigation()
     await page.waitForSelector("body")
