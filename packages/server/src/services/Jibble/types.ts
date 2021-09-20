@@ -1,12 +1,23 @@
 import { BaseClientOptions } from "@automation/httpclient";
 
+export interface IJibbleCredential {
+  personId?: string
+  organizationId?: string
+  accessToken?: string
+  personAccessToken?: string
+  refreshToken?: string
+}
+
 export interface JibbleClientOptions extends BaseClientOptions {
   endpoints?: {
     identity?: string
     timetracker?: string
   }
+  personId?: string
+  organizationId?: string
   accessToken?: string
   personAccessToken?: string
+  refreshToken?: string
 }
 
 export interface IUserAccessTokenResponse {
@@ -45,4 +56,9 @@ export interface IPersonAccessTokenResponse {
   scope: string;
   personId: string;
   organizationId: string;
+}
+
+export enum ClockingType {
+  IN = "In",
+  OUT = "Out"
 }

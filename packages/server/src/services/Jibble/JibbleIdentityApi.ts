@@ -40,10 +40,10 @@ export class JibbleIdentityApi extends BaseApiService<JibbleClientService> {
     return response.data
   }
 
-  public async getPersonId(organizationId: string) {
+  public async getPersonId() {
     const response = await this.apiClient.httpClient.get<
       IPersonIdResponse
-    >(`/v1/People?$filter=organizationId eq+${organizationId}`)
+    >(`/v1/People?$filter=organizationId eq+${this.apiClient.organizationId}`)
     return response.data
   }
 
@@ -51,15 +51,17 @@ export class JibbleIdentityApi extends BaseApiService<JibbleClientService> {
     personData: {
       username: string
       password: string
-      personId: string
-      refreshToken: string
+      // personId: string
+      // refreshToken: string
     }
   ) {
     const data = new FormData()
     data.append("client_id", "ro.client");
     data.append("grant_type", "password");
-    data.append("refresh_token", personData.refreshToken);
-    data.append("acr_values", `prsid:${personData.personId}`);
+    // data.append("refresh_token", personData.refreshToken);
+    data.append("refresh_token", this.apiClient.clientOptions.refreshToken);
+    // data.append("acr_values", `prsid:${personData.personId}`);
+    data.append("acr_values", `prsid:${this.apiClient.personId}`);
     data.append("username", personData.username);
     data.append("password", personData.password);
 
