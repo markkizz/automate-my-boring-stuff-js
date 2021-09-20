@@ -1,1 +1,1 @@
-export { HttpClient } from "./lib/HttpClient"
+export * from "./lib"

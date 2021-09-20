@@ -1,6 +1,6 @@
 {
   "name": "@automation/httpclient",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "./dist/index.js",
   "license": "MIT",
   "typings": "./dist/index.d.ts",
@@ -11,7 +11,7 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
-  "files": ["dist"],
+  "files": ["dist", "src"],
   "scripts": {
     "prepare": "yarn run clean && yarn run build",
     "build": "cross-env NODE_ENV=production ttsc -p .",
