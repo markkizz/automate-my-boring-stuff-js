@@ -1,8 +1,8 @@
-import { EventMessage, ReplyableEvent, TextEventMessage as SDKTextEventMessage } from "@line/bot-sdk"
+import { EventMessage, ReplyableEvent, TextEventMessage as SDKTextEventMessage } from "@line/bot-sdk";
 
 export interface WebhookMessageEvent {
-  destination: string
-  events: TextEventMessage[]
+  destination: string;
+  events: TextEventMessage[];
 }
 
 export type MessageEvent<T extends EventMessage = EventMessage> = {
@@ -10,4 +10,4 @@ export type MessageEvent<T extends EventMessage = EventMessage> = {
   message: T;
 } & ReplyableEvent;
 
-export type TextEventMessage = MessageEvent<SDKTextEventMessage>
+export type TextEventMessage = MessageEvent<SDKTextEventMessage>;

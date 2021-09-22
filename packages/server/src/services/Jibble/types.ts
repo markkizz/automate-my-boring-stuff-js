@@ -1,23 +1,23 @@
 import { BaseClientOptions } from "@automation/httpclient";
 
 export interface IJibbleCredential {
-  personId?: string
-  organizationId?: string
-  accessToken?: string
-  personAccessToken?: string
-  refreshToken?: string
+  personId?: string;
+  organizationId?: string;
+  accessToken?: string;
+  personAccessToken?: string;
+  refreshToken?: string;
 }
 
 export interface JibbleClientOptions extends BaseClientOptions {
   endpoints?: {
-    identity?: string
-    timetracker?: string
-  }
-  personId?: string
-  organizationId?: string
-  accessToken?: string
-  personAccessToken?: string
-  refreshToken?: string
+    identity?: string;
+    timetracker?: string;
+  };
+  personId?: string;
+  organizationId?: string;
+  accessToken?: string;
+  personAccessToken?: string;
+  refreshToken?: string;
 }
 
 export interface IUserAccessTokenResponse {

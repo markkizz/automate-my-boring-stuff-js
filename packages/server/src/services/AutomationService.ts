@@ -10,8 +10,8 @@ export class AutomationService {
     const scraped = await automation.meanGoogleFormAutomation(workingStatus, {
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
       targetUrl: process.env.MEAN_GOOGLE_FORM_URL
-    })
-    return scraped
+    });
+    return scraped;
   }
 
 }

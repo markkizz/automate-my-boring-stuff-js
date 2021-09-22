@@ -1,9 +1,9 @@
 import { Module, NestModule } from "@nestjs/common";
 
-import { LinebotController } from "./Linebot.controller"
+import { LinebotController } from "./Linebot.controller";
 import { LinebotMessageService } from "./LinebotMessage.service";
 import { AutomationService } from "@/services/AutomationService";
-import { LineClient, lineClient } from "@/services/LineHttpClientService"
+import { LineClient, lineClient } from "@/services/LineHttpClientService";
 
 @Module({
   controllers: [LinebotController],

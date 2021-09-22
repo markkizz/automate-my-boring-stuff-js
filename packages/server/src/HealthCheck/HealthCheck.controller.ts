@@ -9,7 +9,7 @@ export class HealthCheckController {
     return {
       statusCode: 200,
       message: "OK"
-    }
+    };
   }
 
 }

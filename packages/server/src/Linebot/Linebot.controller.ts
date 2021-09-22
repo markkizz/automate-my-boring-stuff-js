@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, Post } from "@nestjs/common";
 import { LinebotMessageService } from "./LinebotMessage.service";
 
-import { WebhookMessageEvent } from "./types/Message"
+import { WebhookMessageEvent } from "./types/Message";
 
 @Controller("/linebot")
 export class LinebotController {
@@ -15,8 +15,8 @@ export class LinebotController {
   public async incomingMessage(
     @Body() messageEvent: WebhookMessageEvent
   ) {
-    this._linebotMessageService.manageMessageEvent(messageEvent.events)
-    return {}
+    this._linebotMessageService.manageMessageEvent(messageEvent.events);
+    return {};
   }
 
 }
