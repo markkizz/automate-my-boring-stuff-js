@@ -4,7 +4,7 @@ import { isFalsyValue } from "../utils"
 
 export class HttpClient {
 
-  private readonly _httpClient: AxiosInstance
+  public _http: AxiosInstance
   private readonly _defaultConfig: AxiosRequestConfig = {
     paramsSerializer: (param: unknown) => queryString.stringify(param, {
       skipEmptyString: true,
@@ -16,7 +16,7 @@ export class HttpClient {
   private _responseInterceptor!: number
 
   constructor(config: AxiosRequestConfig) {
-    this._httpClient = axios.create(config)
+    this._http = axios.create(config)
     this.initInterceptor()
   }
 
@@ -25,14 +25,14 @@ export class HttpClient {
   }
 
   private initInterceptor() {
-    this._requestInterceptor = this._httpClient.interceptors.request.use(
+    this._requestInterceptor = this._http.interceptors.request.use(
       (config) => {
         return config
       },
       (error) => Promise.reject(error)
     )
 
-    this._responseInterceptor = this._httpClient.interceptors.response.use(
+    this._responseInterceptor = this._http.interceptors.response.use(
       (response) => response,
       (error) => Promise.reject(error)
     )
@@ -43,7 +43,7 @@ export class HttpClient {
     onRejected?: (error: unknown) => unknown
   ) {
     const httpClient = this.disbleDefaultRequestInterceptor()
-    httpClient._requestInterceptor = this._httpClient.interceptors.request.use(onFulfilled, onRejected)
+    httpClient._requestInterceptor = this._http.interceptors.request.use(onFulfilled, onRejected)
     return httpClient
   }
 
@@ -52,17 +52,17 @@ export class HttpClient {
     onRejected?: (error: unknown) => unknown
   ) {
     const httpclient = this.disableDefaultResponseInterceptor()
-    httpclient._responseInterceptor = this._httpClient.interceptors.response.use(onFulfilled, onRejected)
+    httpclient._responseInterceptor = this._http.interceptors.response.use(onFulfilled, onRejected)
     return httpclient
   }
 
   public disbleDefaultRequestInterceptor() {
-    !isFalsyValue(this._requestInterceptor) && this._httpClient.interceptors.request.eject(this._requestInterceptor)
+    !isFalsyValue(this._requestInterceptor) && this._http.interceptors.request.eject(this._requestInterceptor)
     return this
   }
 
   public disableDefaultResponseInterceptor() {
-    !isFalsyValue(this._responseInterceptor) && this._httpClient.interceptors.response.eject(this._responseInterceptor)
+    !isFalsyValue(this._responseInterceptor) && this._http.interceptors.response.eject(this._responseInterceptor)
     return this
   }
 
@@ -93,7 +93,7 @@ export class HttpClient {
       return _headers
     }, {})
 
-    return this._httpClient.request<TResponse>(config)
+    return this._http.request<TResponse>(config)
   }
 
 
