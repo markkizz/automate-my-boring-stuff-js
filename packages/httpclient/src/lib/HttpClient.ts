@@ -4,7 +4,8 @@ import { isFalsyValue } from "../utils"
 
 export class HttpClient {
 
-  public _http: AxiosInstance
+  private _http: AxiosInstance
+  public _dangerousBaseUrl = ""
   private readonly _defaultConfig: AxiosRequestConfig = {
     paramsSerializer: (param: unknown) => queryString.stringify(param, {
       skipEmptyString: true,
@@ -79,19 +80,22 @@ export class HttpClient {
         method,
         data
       },
-      ...options
+      ...options,
+      ...(this._dangerousBaseUrl ? {baseURL: this._dangerousBaseUrl} : {})
     }
 
-    config.headers = Object.keys(config.headers).reduce((_headers, key) => {
-      if (!isFalsyValue(config.headers[key])) {
-        const newHeaders = {
-          ..._headers,
-          [key]: config.headers[key]
+    if (config.headers) {
+      config.headers = Object.keys(config.headers).reduce((_headers, key) => {
+        if (!isFalsyValue(config.headers[key])) {
+          const newHeaders = {
+            ..._headers,
+            [key]: config.headers[key]
+          }
+          return newHeaders
         }
-        return newHeaders
-      }
-      return _headers
-    }, {})
+        return _headers
+      }, {})
+    }
 
     return this._http.request<TResponse>(config)
   }
