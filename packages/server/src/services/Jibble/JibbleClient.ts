@@ -1,9 +1,10 @@
-import { BaseClientService } from "@automation/httpclient";
 import { JibbleIdentityApi } from "./JibbleIdentityApi";
 import { JibbleTimeTrackerApi } from "./JibbleTimeTrackerApi";
 import { IJibbleCredential, JibbleClientOptions } from "./types";
 
-export class JibbleClientService extends BaseClientService<JibbleClientOptions, JibbleClientService> {
+export class JibbleClientService {
+  private _clientOptions: JibbleClientOptions = {};
+
   private _credential: IJibbleCredential = {
     personId: "",
     organizationId: "",
@@ -12,10 +13,22 @@ export class JibbleClientService extends BaseClientService<JibbleClientOptions, 
     refreshToken: ""
   };
 
-  private _jibbleClientMode: "user" | "person" = "user";
+  public api = {
+    identity: JibbleIdentityApi.create(this._clientOptions, this),
+    timetracker: JibbleTimeTrackerApi.create(
+      {
+        ...this._clientOptions,
+        headers: {
+          ...this._clientOptions.headers,
+          Authorization: `Bearer ${this._credential.personAccessToken}`
+        }
+      },
+      this
+    )
+  };
 
   constructor(clientOptions: JibbleClientOptions) {
-    super(clientOptions);
+    this._clientOptions = clientOptions;
     this._credential = {
       personId: clientOptions.personId,
       organizationId: clientOptions.organizationId,
@@ -23,16 +36,6 @@ export class JibbleClientService extends BaseClientService<JibbleClientOptions, 
       personAccessToken: clientOptions.personAccessToken,
       refreshToken: clientOptions.refreshToken
     };
-    this._setAuthorizationHeader();
-  }
-
-  get mode() {
-    return this._jibbleClientMode;
-  }
-
-  set mode(value) {
-    this._jibbleClientMode = value;
-    this._setAuthorizationHeader();
   }
 
   get personId() {
@@ -57,7 +60,6 @@ export class JibbleClientService extends BaseClientService<JibbleClientOptions, 
 
   set accessToken(value) {
     this._credential.accessToken = value;
-    this._setAuthorizationHeader();
   }
 
   get personAccessToken() {
@@ -66,7 +68,6 @@ export class JibbleClientService extends BaseClientService<JibbleClientOptions, 
 
   set personAccessToken(value) {
     this._credential.personAccessToken = value;
-    this._setAuthorizationHeader();
   }
 
   get refreshToken() {
@@ -77,30 +78,11 @@ export class JibbleClientService extends BaseClientService<JibbleClientOptions, 
     this._credential.refreshToken = value;
   }
 
-  public readonly identity: JibbleIdentityApi = new JibbleIdentityApi(this);
-  public readonly timetracker: JibbleTimeTrackerApi = new JibbleTimeTrackerApi(this);
 
   public static create(
     clientOptions: JibbleClientOptions
   ) {
     return new JibbleClientService(clientOptions);
-  }
-
-  private _getAuthorizationHeader(token?: string) {
-    return token ? {
-      authorization: `Bearer ${token}`
-    } : {};
-  }
-
-  private _setAuthorizationHeader() {
-    this.httpClient._http.defaults.headers = {
-      ...this.httpClient._http.defaults.headers,
-      ...this._getAuthorizationHeader(
-        this._jibbleClientMode === "user"
-          ? this._credential.accessToken
-          : this._credential.personAccessToken
-      )
-    };
   }
 
 }

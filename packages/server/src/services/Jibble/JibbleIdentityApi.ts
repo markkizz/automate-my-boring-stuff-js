@@ -1,16 +1,17 @@
 import { stringify } from "query-string";
 import FormData from "form-data";
-import { BaseApiService } from "@automation/httpclient";
+// import { BaseClientService } from "@automation/httpclient";
 import { JibbleClientService } from "./JibbleClient";
-import { IOrganizationIdResponse, IPersonAccessTokenResponse, IPersonIdResponse, IUserAccessTokenResponse } from "./types";
+import { IOrganizationIdResponse, IPersonAccessTokenResponse, IPersonIdResponse, IUserAccessTokenResponse, JibbleClientOptions } from "./types";
 import _cloneDeep from "lodash/cloneDeep";
+import { BaseJibbleApi } from "./BaseJibbleApi";
 
-export class JibbleIdentityApi extends BaseApiService<JibbleClientService> {
+export class JibbleIdentityApi extends BaseJibbleApi {
 
-  constructor(apiClient: JibbleClientService) {
-    const client = _cloneDeep(apiClient);
-    client.clientOptions.baseURL = apiClient.clientOptions.endpoints.identity;
-    super(client);
+  public static create(clientOptions: JibbleClientOptions, apiClient: JibbleClientService) {
+    const options = _cloneDeep(clientOptions);
+    options.baseURL = clientOptions.endpoints.identity;
+    return new JibbleIdentityApi(options, apiClient);
   }
 
   public async getUserAccessToken(username: string, password: string) {
@@ -23,7 +24,7 @@ export class JibbleIdentityApi extends BaseApiService<JibbleClientService> {
       skipEmptyString: true,
       skipNull: true
     });
-    const response = await this.apiClient.httpClient.post<
+    const response = await this.httpClient.post<
       string,
       IUserAccessTokenResponse
     >("/connect/token", data, {
@@ -36,41 +37,53 @@ export class JibbleIdentityApi extends BaseApiService<JibbleClientService> {
   }
 
   public async getOrganizationId() {
-    const response = await this.apiClient.httpClient.get<IOrganizationIdResponse>("/v1/Organizations");
+    const response = await this.httpClient.get<IOrganizationIdResponse>(
+      "/v1/Organizations",
+      {
+        headers: {
+          ...this.getAuthorizationHeader(
+            this.rootClient.accessToken
+          )
+        }
+      }
+    );
     return response.data;
   }
 
   public async getPersonId() {
-    const response = await this.apiClient.httpClient.get<
+    const response = await this.httpClient.get<
       IPersonIdResponse
-    >(`/v1/People?$filter=organizationId eq+${this.apiClient.organizationId}`);
+    >(
+      `/v1/People?$filter=organizationId eq+${this.rootClient.organizationId}`,
+      {
+        headers: {
+          ...this.getAuthorizationHeader(
+            this.rootClient.accessToken
+          )
+        }
+      }
+    );
     return response.data;
   }
 
-  public async getPersonAccessToken(
-    personData: {
-      username: string;
-      password: string;
-      // personId: string
-      // refreshToken: string
-    }
-  ) {
+  public async getPersonAccessToken(username: string, password: string) {
     const data = new FormData();
     data.append("client_id", "ro.client");
     data.append("grant_type", "password");
-    // data.append("refresh_token", personData.refreshToken);
-    data.append("refresh_token", this.apiClient.clientOptions.refreshToken);
-    // data.append("acr_values", `prsid:${personData.personId}`);
-    data.append("acr_values", `prsid:${this.apiClient.personId}`);
-    data.append("username", personData.username);
-    data.append("password", personData.password);
+    data.append("refresh_token", this.clientOptions.refreshToken);
+    data.append("acr_values", `prsid:${this.rootClient.personId}`);
+    data.append("username", username);
+    data.append("password", password);
 
-    const response = await this.apiClient.httpClient.post<
+    const response = await this.httpClient.post<
       FormData,
       IPersonAccessTokenResponse
     >("/connect/token", data, {
       headers: {
-        ...data.getHeaders()
+        ...data.getHeaders(),
+        ...this.getAuthorizationHeader(
+          this.rootClient.personAccessToken
+        )
       }
     });
     return response.data;
