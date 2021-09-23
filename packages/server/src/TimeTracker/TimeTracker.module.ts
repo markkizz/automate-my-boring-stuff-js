@@ -5,16 +5,21 @@ import { TimeTrackerHttp } from "./TimeTracker.http";
 import { TimeTrackerAuthMiddleware } from "./TimeTracker.middleware";
 import { TimeTrackerService } from "./TimeTracker.service";
 
+const TimeTrackerJWT = JwtModule.register({
+  secret: process.env.SECRET,
+  signOptions: {
+    expiresIn: "24h"
+  }
+});
+
 @Module({
   imports: [
-    JwtModule.register({
-      secret: process.env.SECRET
-    }),
+    TimeTrackerJWT
   ],
   controllers: [TimeTrackerController],
   providers: [
     TimeTrackerHttp,
-    TimeTrackerService
+    TimeTrackerService,
   ]
 })
 export class TimeTrackerModule implements NestModule {
