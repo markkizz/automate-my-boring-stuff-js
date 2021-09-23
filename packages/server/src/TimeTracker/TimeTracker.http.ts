@@ -20,9 +20,8 @@ export class TimeTrackerHttp extends JibbleClientService {
         timetracker: process.env.JIBBLE_TIMETRACKER_URL
       }
     });
-    if (_request.headers.authorization) {
-      const authToken = _request.headers.authorization.split(" ")?.[1];
-      const data = _jwtService.decode(authToken) as IJibbleCredential;
+    const data = _request.headers.authorization && _jwtService.decode(_request.headers.authorization) as IJibbleCredential;
+    if (data) {
       this.personId = data.personId;
       this.organizationId = data.organizationId;
       this.accessToken = data.accessToken;

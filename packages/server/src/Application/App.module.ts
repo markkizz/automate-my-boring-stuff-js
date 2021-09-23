@@ -5,9 +5,10 @@ import { HealthCheckController } from "@/HealthCheck/HealthCheck.controller";
 import { linebotMiddleware } from "@/Linebot/Linebot.middleware";
 import { JsonBodyMiddleware } from "@/middlewares/BodyParserMiddleware";
 import { LoggerMiddleware } from "@/middlewares/LoggerMiddleware";
+import { TimeTrackerModule } from "@/TimeTracker/TimeTracker.module";
 
 @Module({
-  imports: [LinebotModule],
+  imports: [LinebotModule, TimeTrackerModule],
   controllers: [HealthCheckController],
 })
 export class AppModule implements NestModule {
