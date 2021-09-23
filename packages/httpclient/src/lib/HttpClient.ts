@@ -1,6 +1,8 @@
 import axios, { AxiosInstance, AxiosRequestConfig, Method, AxiosResponse } from "axios"
+import dayjs from "dayjs"
 import queryString from "query-string"
 import { isFalsyValue } from "../utils"
+import { generateInterceptorErrorLogger, generateInterceptorResponseLogger } from "./logger"
 
 export class HttpClient {
 
@@ -34,8 +36,8 @@ export class HttpClient {
     )
 
     this._responseInterceptor = this._http.interceptors.response.use(
-      (response) => response,
-      (error) => Promise.reject(error)
+      generateInterceptorResponseLogger(),
+      generateInterceptorErrorLogger()
     )
   }
 
@@ -53,7 +55,10 @@ export class HttpClient {
     onRejected?: (error: unknown) => unknown
   ) {
     const httpclient = this.disableDefaultResponseInterceptor()
-    httpclient._responseInterceptor = this._http.interceptors.response.use(onFulfilled, onRejected)
+    httpclient._responseInterceptor = this._http.interceptors.response.use(
+      generateInterceptorResponseLogger(onFulfilled),
+      generateInterceptorErrorLogger(onRejected)
+    )
     return httpclient
   }
 
@@ -78,7 +83,10 @@ export class HttpClient {
       ...{
         url,
         method,
-        data
+        data,
+        meta: {
+          requestStart: dayjs(new Date()).valueOf()
+        }
       },
       ...options,
       ...(this._dangerousBaseUrl ? {baseURL: this._dangerousBaseUrl} : {})
