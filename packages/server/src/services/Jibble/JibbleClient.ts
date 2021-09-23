@@ -15,13 +15,7 @@ export class JibbleClientService extends BaseClientService<JibbleClientOptions, 
   private _jibbleClientMode: "user" | "person" = "user";
 
   constructor(clientOptions: JibbleClientOptions) {
-    super({
-      ...clientOptions,
-      headers: {
-        ...clientOptions.headers,
-        authorization: `Bearer ${clientOptions.accessToken ? clientOptions.accessToken : clientOptions.personAccessToken}`
-      }
-    });
+    super(clientOptions);
     this._credential = {
       personId: clientOptions.personId,
       organizationId: clientOptions.organizationId,
@@ -29,6 +23,7 @@ export class JibbleClientService extends BaseClientService<JibbleClientOptions, 
       personAccessToken: clientOptions.personAccessToken,
       refreshToken: clientOptions.refreshToken
     };
+    this._setAuthorizationHeader();
   }
 
   get mode() {
@@ -91,10 +86,10 @@ export class JibbleClientService extends BaseClientService<JibbleClientOptions, 
     return new JibbleClientService(clientOptions);
   }
 
-  private _getAuthorizationHeader(token: string) {
-    return {
+  private _getAuthorizationHeader(token?: string) {
+    return token ? {
       authorization: `Bearer ${token}`
-    };
+    } : {};
   }
 
   private _setAuthorizationHeader() {
