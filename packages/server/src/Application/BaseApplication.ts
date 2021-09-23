@@ -1,7 +1,7 @@
 // import { Express } from "express"
 import { AbstractHttpAdapter, NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
-import { NestApplicationOptions } from "@nestjs/common";
+import { NestApplicationOptions, ValidationPipe } from "@nestjs/common";
 import { ConstructableFunction } from "./types/Application";
 
 /* eslint-disable @typescript-eslint/ban-types */
@@ -43,6 +43,8 @@ export abstract class BaseApplication {
       this._serverOptions?.cors && this._server.enableCors(
         (typeof this._serverOptions.cors !== "boolean") && this._serverOptions.cors || {}
       );
+
+      this._server.useGlobalPipes(new ValidationPipe());
 
       await this._server.init();
       this._server.listen(port);

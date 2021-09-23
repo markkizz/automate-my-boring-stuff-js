@@ -1,5 +1,5 @@
-import { IJibbleCredential } from "@/services/Jibble/types";
-import { Inject, Injectable, Scope } from "@nestjs/common";
+import { ClockingType, IJibbleCredential } from "@/services/Jibble/types";
+import { HttpException, Inject, Injectable, InternalServerErrorException, Scope } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { TimeTrackerFactory } from "./TimeTracker.factory";
 
@@ -39,7 +39,18 @@ export class TimeTrackerService {
         accessToken: tokenSigned
       };
     } catch (error) {
-      console.log("error");
+      if (!(error instanceof HttpException) && error.statusCode !== 401) throw new InternalServerErrorException();
+      throw error;
+    }
+  }
+
+  public async clocking(type: ClockingType) {
+    try {
+      const jibbleClient = this._timeTrackerfactory.getClient();
+      const clockingResponse = await jibbleClient.api.timetracker.clocking(type);
+      return clockingResponse;
+    } catch (error) {
+      console.log(error);
       throw error;
     }
   }

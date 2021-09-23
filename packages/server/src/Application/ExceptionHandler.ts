@@ -12,12 +12,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
     // TODO: transform http status code to http status message
     const logMsg = `${request.method} ${request.originalUrl} - ${status} ${exception.message}`;
     this._logger.error(logMsg);
-    console.log(exception.stack);
+    const exceptionResponse = exception.getResponse() as { statusCode: number; message: string | string[]; error: string };
     response
       .status(status)
       .json({
         statusCode: status,
-        message: exception.message
+        message: exceptionResponse?.error || exception.message,
+        ...(exceptionResponse?.message && { error: exceptionResponse.message })
       });
   }
 }

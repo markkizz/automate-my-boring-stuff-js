@@ -30,6 +30,7 @@ export class TimeTrackerFactory {
     ) as IJibbleCredential;
     if (data) {
       this._clientOptions = {
+        ...this._clientOptions,
         personId: data.personId,
         organizationId: data.organizationId,
         accessToken: data.accessToken,

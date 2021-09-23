@@ -1,6 +1,7 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, HttpCode } from "@nestjs/common";
+import { Auth } from "./decorator/Auth";
 import { TimeTrackerService } from "./TimeTracker.service";
-import { LoginRequest } from "./types/Request";
+import { ClockingRequest, LoginRequest } from "./types/Request";
 
 @Controller("/v1/timetracker")
 export class TimeTrackerController {
@@ -16,6 +17,16 @@ export class TimeTrackerController {
     @Body() loginRequest: LoginRequest
   ) {
     const response = await this._timeTrackerService.login(loginRequest.username, loginRequest.password);
+    return response;
+  }
+
+  @HttpCode(201)
+  @Auth()
+  @Post("/")
+  public async clocking(
+    @Body() clockRequest: ClockingRequest
+  ) {
+    const response = await this._timeTrackerService.clocking(clockRequest.type);
     return response;
   }
 

@@ -21,6 +21,7 @@ export class TimeTrackerAuthGuard implements CanActivate {
       request.headers.authorization,
       request.headers.originalAuthorization as string
     );
+    (request as any).user = this._jwtService.decode(request.headers.authorization);
     return isJWTValid;
   }
 
