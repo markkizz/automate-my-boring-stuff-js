@@ -40,6 +40,10 @@ export abstract class BaseApplication {
         this._server.useGlobalFilters(new FilterConstructable());
       });
 
+      this._serverOptions?.cors && this._server.enableCors(
+        (typeof this._serverOptions.cors !== "boolean") && this._serverOptions.cors || {}
+      );
+
       await this._server.init();
       this._server.listen(port);
       console.log(`Server started on port ${port}`);

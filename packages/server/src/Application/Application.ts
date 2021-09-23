@@ -8,7 +8,15 @@ import { HttpExceptionFilter } from "./ExceptionHandler";
 export class Application extends BaseApplication {
   constructor(expressInstance: Express) {
     super(AppModule, {
-      bodyParser: false
+      bodyParser: false,
+      cors: {
+        origin: "*",
+        allowedHeaders: [
+          "X-Line-Signature",
+          "x-line-signature",
+          "authorization",
+        ]
+      }
     });
 
     this.installAdapter(new ExpressAdapter(expressInstance));
