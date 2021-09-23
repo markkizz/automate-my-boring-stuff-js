@@ -2,14 +2,21 @@ import { JibbleClientService } from "./JibbleClient";
 import _cloneDeep from "lodash/cloneDeep";
 import { v4 as UUIDV4 } from "uuid";
 import { ClockingType, JibbleClientOptions } from "./types";
-import { BaseJibbleApi } from "./BaseJibbleApi";
+// import { BaseJibbleApi } from "./BaseJibbleApi";
+import { BaseClientService } from "@automation/httpclient";
 
-export class JibbleTimeTrackerApi extends BaseJibbleApi {
+export class JibbleTimeTrackerApi extends BaseClientService<JibbleClientOptions, JibbleClientService> {
 
-  public static create(clientOptions: JibbleClientOptions, apiClient: JibbleClientService) {
+  // public static create(clientOptions: JibbleClientOptions, apiClient: JibbleClientService) {
+  //   const options = _cloneDeep(clientOptions);
+  //   options.baseURL = clientOptions.endpoints.timetracker;
+  //   return new JibbleTimeTrackerApi(options, apiClient);
+  // }
+
+  constructor(clientOptions: JibbleClientOptions, apiClient: JibbleClientService) {
     const options = _cloneDeep(clientOptions);
-    options.baseURL = clientOptions.endpoints.timetracker;
-    return new JibbleTimeTrackerApi(options, apiClient);
+    options.baseURL = clientOptions.endpoints?.timetracker;
+    super(options, apiClient);
   }
 
   public async clocking(type: ClockingType) {

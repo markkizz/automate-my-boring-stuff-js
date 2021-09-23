@@ -1,9 +1,9 @@
 import { JibbleIdentityApi } from "./JibbleIdentityApi";
 import { JibbleTimeTrackerApi } from "./JibbleTimeTrackerApi";
-import { IJibbleCredential, JibbleClientOptions } from "./types";
+import { IJibbleCredential, JibbleApi, JibbleClientOptions } from "./types";
 
 export class JibbleClientService {
-  private _clientOptions: JibbleClientOptions = {};
+  public _clientOptions: JibbleClientOptions = {};
 
   private _credential: IJibbleCredential = {
     personId: "",
@@ -13,20 +13,9 @@ export class JibbleClientService {
     refreshToken: ""
   };
 
-  public api = {
-    identity: JibbleIdentityApi.create(this._clientOptions, this),
-    timetracker: JibbleTimeTrackerApi.create(
-      {
-        ...this._clientOptions,
-        headers: {
-          ...this._clientOptions.headers,
-          Authorization: `Bearer ${this._credential.personAccessToken}`
-        }
-      },
-      this
-    )
-  };
+  public api: JibbleApi = {};
 
+  // use BaseClass to initialize property before contructor
   constructor(clientOptions: JibbleClientOptions) {
     this._clientOptions = clientOptions;
     this._credential = {
@@ -35,6 +24,19 @@ export class JibbleClientService {
       accessToken: clientOptions.accessToken,
       personAccessToken: clientOptions.personAccessToken,
       refreshToken: clientOptions.refreshToken
+    };
+    this.api = {
+      identity: new JibbleIdentityApi(this._clientOptions, this),
+      timetracker: new JibbleTimeTrackerApi(
+        {
+          ...this._clientOptions,
+          headers: {
+            ...this._clientOptions.headers,
+            ...(this._credential.personAccessToken && { Authorization: `Bearer ${this._credential.personAccessToken}` })
+          }
+        },
+        this
+      )
     };
   }
 

@@ -18,4 +18,5 @@ export class TimeTrackerController {
     const response = await this._timeTrackerService.login(loginRequest.username, loginRequest.password);
     return response;
   }
+
 }

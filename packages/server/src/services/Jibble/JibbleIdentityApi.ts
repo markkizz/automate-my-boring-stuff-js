@@ -4,14 +4,20 @@ import FormData from "form-data";
 import { JibbleClientService } from "./JibbleClient";
 import { IOrganizationIdResponse, IPersonAccessTokenResponse, IPersonIdResponse, IUserAccessTokenResponse, JibbleClientOptions } from "./types";
 import _cloneDeep from "lodash/cloneDeep";
-import { BaseJibbleApi } from "./BaseJibbleApi";
+import { BaseClientService } from "@automation/httpclient";
 
-export class JibbleIdentityApi extends BaseJibbleApi {
+export class JibbleIdentityApi extends BaseClientService<JibbleClientOptions, JibbleClientService> {
 
-  public static create(clientOptions: JibbleClientOptions, apiClient: JibbleClientService) {
+  private getAuthorizationHeader(token: string) {
+    return {
+      Authorization: `Bearer ${token}`
+    };
+  }
+
+  constructor(clientOptions: JibbleClientOptions, apiClient: JibbleClientService) {
     const options = _cloneDeep(clientOptions);
     options.baseURL = clientOptions.endpoints.identity;
-    return new JibbleIdentityApi(options, apiClient);
+    super(options, apiClient);
   }
 
   public async getUserAccessToken(username: string, password: string) {
@@ -70,7 +76,7 @@ export class JibbleIdentityApi extends BaseJibbleApi {
     const data = new FormData();
     data.append("client_id", "ro.client");
     data.append("grant_type", "password");
-    data.append("refresh_token", this.clientOptions.refreshToken);
+    data.append("refresh_token", this.rootClient.refreshToken);
     data.append("acr_values", `prsid:${this.rootClient.personId}`);
     data.append("username", username);
     data.append("password", password);

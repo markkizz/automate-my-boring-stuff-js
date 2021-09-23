@@ -1,4 +1,11 @@
 import { BaseClientOptions } from "@automation/httpclient";
+import { JibbleIdentityApi } from "./JibbleIdentityApi";
+import { JibbleTimeTrackerApi } from "./JibbleTimeTrackerApi";
+
+export interface JibbleApi {
+  identity?: JibbleIdentityApi;
+  timetracker?: JibbleTimeTrackerApi;
+}
 
 export interface IJibbleCredential {
   personId?: string;
