@@ -3,12 +3,12 @@ import { LineClient, LineClientService } from "@/services/LineHttpClientService"
 import { WorkinStatus } from "@automation/browser-automation";
 import { Inject, Injectable, InternalServerErrorException, NotFoundException, Scope } from "@nestjs/common";
 
-import { TextEventMessage } from "./types/Message";
+import { TextEventMessage } from "../../types/Message";
 
 @Injectable({
   scope: Scope.REQUEST
 })
-export class LinebotMessageService {
+export class MrMooLinebotMessageService {
 
   @Inject(LineClient)
   private _lineClient: LineClientService;

@@ -1,21 +1,21 @@
 import { Module, NestModule } from "@nestjs/common";
 
-import { LinebotController } from "./Linebot.controller";
-import { LinebotMessageService } from "./LinebotMessage.service";
+import { MrMooLinebotController } from "./MrMoo/v1/MrMoo.controller";
+import { MrMooLinebotMessageService } from "./MrMoo/v1/MrMoo.service";
 import { AutomationService } from "@/services/AutomationService";
 import { LineClient, lineClient } from "@/services/LineHttpClientService";
 
 @Module({
-  controllers: [LinebotController],
+  controllers: [MrMooLinebotController],
   providers: [
-    LinebotMessageService,
+    MrMooLinebotMessageService,
     AutomationService,
     {
       provide: LineClient,
       useValue: lineClient
     }
   ],
-  exports: [LinebotMessageService]
+  exports: [MrMooLinebotMessageService]
 })
 export class LinebotModule implements NestModule {
   public configure(/* consumer: MiddlewareConsumer */) {
