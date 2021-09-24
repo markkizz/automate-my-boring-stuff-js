@@ -69,3 +69,45 @@ export enum ClockingType {
   IN = "In",
   OUT = "Out"
 }
+
+export interface ILatestTimeEntry {
+  "@odata.context": string;
+  belongsToDate: Date;
+  localTime: Date;
+  personId: string;
+  organizationId: string;
+  projectId: null;
+  activityId: null;
+  locationId: null;
+  kioskId: null;
+  breakId: null;
+  clientType: string;
+  type: ClockingType;
+  time: Date;
+  offset: string;
+  autoClockOutTime: null;
+  clockInOutReminderTime: null;
+  isOffline: boolean;
+  isFaceRecognized: null;
+  faceSimilarity: null;
+  isAutomatic: boolean;
+  isManual: boolean;
+  isUnusual: boolean;
+  isEndOfDay: boolean;
+  note: null;
+  status: string; // "Active"
+  createdAt: Date;
+  updatedAt: Date;
+  isLocked: boolean;
+  id: string;
+  coordinates: null;
+  picture: null;
+  platform: {
+    clientVersion: null;
+    os: null;
+    deviceModel: null;
+    deviceName: null;
+  };
+  activity: null;
+  project: null;
+}

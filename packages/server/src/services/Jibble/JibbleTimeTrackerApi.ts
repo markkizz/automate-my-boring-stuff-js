@@ -1,17 +1,10 @@
 import { JibbleClientService } from "./JibbleClient";
 import _cloneDeep from "lodash/cloneDeep";
 import { v4 as UUIDV4 } from "uuid";
-import { ClockingType, JibbleClientOptions } from "./types";
-// import { BaseJibbleApi } from "./BaseJibbleApi";
+import { ClockingType, ILatestTimeEntry, JibbleClientOptions } from "./types";
 import { BaseClientService } from "@automation/httpclient";
 
 export class JibbleTimeTrackerApi extends BaseClientService<JibbleClientOptions, JibbleClientService> {
-
-  // public static create(clientOptions: JibbleClientOptions, apiClient: JibbleClientService) {
-  //   const options = _cloneDeep(clientOptions);
-  //   options.baseURL = clientOptions.endpoints.timetracker;
-  //   return new JibbleTimeTrackerApi(options, apiClient);
-  // }
 
   constructor(clientOptions: JibbleClientOptions, apiClient: JibbleClientService) {
     const options = _cloneDeep(clientOptions);
@@ -36,6 +29,18 @@ export class JibbleTimeTrackerApi extends BaseClientService<JibbleClientOptions,
 
   public async clockOut() {
     await this.clocking(ClockingType.OUT);
+  }
+
+  public async getLatestTimeEntry() {
+    const response = await this.httpClient.get<ILatestTimeEntry>(
+      `https://time-tracking.prod.jibble.io/v1/People(${this.rootClient.personId})/LatestTimeEntry`,
+      {
+        params: {
+          "$expand": "activity,project"
+        }
+      }
+    );
+    return response.data;
   }
 
 }

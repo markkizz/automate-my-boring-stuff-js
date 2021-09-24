@@ -1,5 +1,5 @@
 import { ClockingType, IJibbleCredential } from "@/services/Jibble/types";
-import { HttpException, Inject, Injectable, InternalServerErrorException, Scope } from "@nestjs/common";
+import { HttpException, Inject, Injectable, InternalServerErrorException, NotAcceptableException, Scope } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { TimeTrackerFactory } from "./TimeTracker.factory";
 
@@ -47,10 +47,33 @@ export class TimeTrackerService {
   public async clocking(type: ClockingType) {
     try {
       const jibbleClient = this._timeTrackerfactory.getClient();
+      const currentStatus = await this.getLatestTimeEntry();
+      if (currentStatus.clockType === type) {
+        throw new NotAcceptableException(`The clock status already is ${type}`);
+      }
       const clockingResponse = await jibbleClient.api.timetracker.clocking(type);
       return clockingResponse;
     } catch (error) {
-      console.log(error);
+      if (!(error instanceof HttpException) && error.statusCode !== 401) throw new InternalServerErrorException();
+      throw error;
+    }
+  }
+
+  public async getLatestTimeEntry() {
+    try {
+      const jibbleClient = this._timeTrackerfactory.getClient();
+      const latestTimeDetail = await jibbleClient.api.timetracker.getLatestTimeEntry();
+      return {
+        id: latestTimeDetail.id,
+        currentDate: latestTimeDetail.belongsToDate,
+        clockType: latestTimeDetail.type,
+        time: latestTimeDetail.time,
+        status: latestTimeDetail.status,
+        createdAt: latestTimeDetail.createdAt,
+        updatedAt: latestTimeDetail.updatedAt
+      };
+    } catch (error) {
+      if (!(error instanceof HttpException) && error.statusCode !== 401) throw new InternalServerErrorException();
       throw error;
     }
   }

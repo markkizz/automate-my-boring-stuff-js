@@ -1,4 +1,4 @@
-import { Body, Controller, Post, HttpCode } from "@nestjs/common";
+import { Body, Controller, Post, HttpCode, Get } from "@nestjs/common";
 import { Auth } from "./decorator/Auth";
 import { TimeTrackerService } from "./TimeTracker.service";
 import { ClockingRequest, LoginRequest } from "./types/Request";
@@ -17,6 +17,13 @@ export class TimeTrackerController {
     @Body() loginRequest: LoginRequest
   ) {
     const response = await this._timeTrackerService.login(loginRequest.username, loginRequest.password);
+    return response;
+  }
+
+  @Auth()
+  @Get("/")
+  public async getLatestTimeEntry() {
+    const response = await this._timeTrackerService.getLatestTimeEntry();
     return response;
   }
 
