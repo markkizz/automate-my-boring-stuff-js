@@ -28,7 +28,6 @@ export class TimeTrackerAuthGuard implements CanActivate {
   public validateToken(token: string, tokenAsBearer?: string) {
     try {
       const isContainBearer = tokenAsBearer ? tokenAsBearer.includes("Bearer") : true;
-      console.log("isContainBearer", isContainBearer);
       if (!isContainBearer) throw new UnauthorizedException();
       const isValid = this._jwtService.verify(token);
       if (!isValid) throw new UnauthorizedException();

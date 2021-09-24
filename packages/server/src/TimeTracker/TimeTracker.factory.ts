@@ -1,7 +1,6 @@
 import { JibbleClientService } from "@/services/Jibble/JibbleClient";
 import { IJibbleCredential, JibbleClientOptions } from "@/services/Jibble/types";
 import { Inject, Injectable, Scope } from "@nestjs/common";
-// import _isEmpty from "lodash/isEmpty";
 import { REQUEST } from "@nestjs/core";
 import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";

@@ -1,6 +1,5 @@
 import { stringify } from "query-string";
 import FormData from "form-data";
-// import { BaseClientService } from "@automation/httpclient";
 import { JibbleClientService } from "./JibbleClient";
 import { IOrganizationIdResponse, IPersonAccessTokenResponse, IPersonIdResponse, IUserAccessTokenResponse, JibbleClientOptions } from "./types";
 import _cloneDeep from "lodash/cloneDeep";
