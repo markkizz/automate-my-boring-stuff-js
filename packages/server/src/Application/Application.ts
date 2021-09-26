@@ -15,6 +15,7 @@ export class Application extends BaseApplication {
           "X-Line-Signature",
           "x-line-signature",
           "authorization",
+          "Content-Type"
         ]
       }
     });
