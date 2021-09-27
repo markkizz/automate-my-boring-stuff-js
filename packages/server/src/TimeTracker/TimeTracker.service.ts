@@ -1,5 +1,5 @@
 import { ClockingType, IJibbleCredential } from "@/services/Jibble/types";
-import { HttpException, Inject, Injectable, InternalServerErrorException, NotAcceptableException, Scope } from "@nestjs/common";
+import { ForbiddenException, HttpException, Inject, Injectable, InternalServerErrorException, NotAcceptableException, Scope, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { TimeTrackerFactory } from "./TimeTracker.factory";
 
@@ -39,7 +39,13 @@ export class TimeTrackerService {
         accessToken: tokenSigned
       };
     } catch (error) {
-      if (!(error instanceof HttpException) && error.statusCode !== 401) throw new InternalServerErrorException();
+      if ((error.response?.status < 200 || error.response?.status >= 400) && (error.response?.data?.error_description === "invalid_username_or_password")) {
+        throw new UnauthorizedException();
+      }
+
+      if ((error.response?.status < 200 || error.response?.status >= 400) && (error.response?.data?.error_description === "locked_out")) {
+        throw new ForbiddenException("Your account has been locked.");
+      }
       throw error;
     }
   }
@@ -73,7 +79,7 @@ export class TimeTrackerService {
         updatedAt: latestTimeDetail.updatedAt
       };
     } catch (error) {
-      if (!(error instanceof HttpException) && error.statusCode !== 401) throw new InternalServerErrorException();
+      if (!(error instanceof HttpException) && error.response?.status !== 401) throw new InternalServerErrorException();
       throw error;
     }
   }
